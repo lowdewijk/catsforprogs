@@ -1,0 +1,12 @@
+digraph G {
+  void -> void [label="id"]
+  void -> Bool [label="absurd"]
+  void -> unit [label="absurd"]
+
+  unit -> unit [label="id"]
+  unit -> Bool [label="True"]
+  unit:nw -> Bool [label="False"]
+  
+  Bool:nw -> Bool:nw [label="id"]
+  Bool:nw -> Bool:nw [label="not"]  
+}

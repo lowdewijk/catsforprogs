@@ -14,6 +14,9 @@
         pkgs = import nixpkgs { inherit system; overlays = [ ]; };
         deps = pkgs: (with pkgs; [
           ghc
+          typescript
+          nodejs
+          graphviz
         ]);
       in {
         devShells = {
