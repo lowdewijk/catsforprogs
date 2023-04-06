@@ -226,5 +226,14 @@ digraph G {
 ```
 
 2. Q: What kind of order is this?
+
 2.1.  Q: A set of sets with the inclusion relation: A is included in B if every element of A is also an element of B.
+
+A relation $aRb$ is an inclusion relation when $a,b \in X: a \subseteq b$
+
+This is a partial-order because the relation is:
+
+ * ✅ reflexive: $\forall x\in X:x\subseteq x$
+ * ✅ transitive: $\forall a,b,c\in X:\ ( a\ \subseteq b\ \land b\ \subseteq c) \ \rightarrow a\ \subseteq c$
+ * ✅ anti-symmetric: $∀a,b∈X:a ⊆b ∧b ⊆a\rightarrow{} a = b$ 
 
