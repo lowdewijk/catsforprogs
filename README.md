@@ -13,7 +13,7 @@ I will chose Haskell as my favorite programming language. TypeScript will be my 
 
 ### Exercises
 
-1.  In TypeScript:
+1.1.  In TypeScript:
 
 ```typescript
 function id(x: X) {
@@ -21,7 +21,7 @@ function id(x: X) {
 }
 ```
 
-2.  In TypeScript:
+1.2.  In TypeScript:
 
 ```typescript
 function compose<A, B, C>(f: (a: B) => C, g: (a: A) => B):  (a: A) => C {
@@ -29,7 +29,7 @@ function compose<A, B, C>(f: (a: B) => C, g: (a: A) => B):  (a: A) => C {
 }
 ```
 
-3. In TypeScript we can proof that compose is both associate and respects identity using the type system. If this program compiles it proofs the function compose respects both laws:
+1.3. In TypeScript we can proof that compose is both associate and respects identity using the type system. If this program compiles it proofs the function compose respects both laws:
 
 ```typescript
 function numberToString(a: number): string { return a + ""; }
@@ -49,11 +49,11 @@ function proofCompose() {
 }
 ```
 
-4. Yes. Pages are objects. Morphisms are links.
+1.4. Yes. Pages are objects. Morphisms are links.
 
-5. Yes.
+1.5. Yes.
 
-6. When it allows loop edges *and* when for any two edges between three distinct nodes there is a third edge that points from the source of the first node to the target of the third. 
+1.6. When it allows loop edges *and* when for any two edges between three distinct nodes there is a third edge that points from the source of the first node to the target of the third. 
 
 ## 2. Types and Functions
 
@@ -69,7 +69,7 @@ function proofCompose() {
 
 ### Exercises
 
-1. In TypeScript:
+2.1. In TypeScript:
 
 ```typescript
 function memoize<A extends string | number, B>(fn: (a: A) => B): (a: A) => B {
@@ -87,7 +87,7 @@ function memoize<A extends string | number, B>(fn: (a: A) => B): (a: A) => B {
 }
 ```
 
-2. Yes, it works. In TypeScript:
+2.2. Yes, it works. In TypeScript:
 
 ```typescript
 const memoizedParsedInt = memoize((x: number) => {
@@ -100,13 +100,13 @@ memoizedParsedInt("42");
 
 will output `42` twice, but only print `parseInt called` once.
 
-3. JavaScript does not have seeding. It would like look like this (and it would work):
+2.3. JavaScript does not have seeding. It would like look like this (and it would work):
 
 ```typescript
 const rnd = memoize(randomWithSeed(123));
 ```
 
-4.  
+2.4.  
 ```
 4.1 Yes.
 4.2 No. Getting values from stdin is a side-effect. 
@@ -114,7 +114,7 @@ const rnd = memoize(randomWithSeed(123));
 4.4 No. The static variable is mutated.
 ```
 
-5. `2 ^ 2 = 4` functions:
+2.5. `2 ^ 2 = 4` functions:
 
 ```
 True -> True
@@ -123,7 +123,7 @@ False -> True
 False -> False
 ```
 
-6.  This challenge is a bit vague, because there can exist a function between each of these types, but not all of them make sense.
+2.6.  This challenge is a bit vague, because there can exist a function between each of these types, but not all of them make sense.
 
 ```graphviz
 digraph G {
@@ -156,7 +156,7 @@ digraph G {
 
 ### Exercises
 
-1.1. Add an identity arrow.
+3.1.1. Add an identity arrow.
 
 ```graphviz
 digraph G {
@@ -164,7 +164,7 @@ digraph G {
 }
 ```
 
-1.2. Add an identity arrow and infinite arrows for the composition of `f` with `f` and the composition of `f ∘ f` with `f`,  etc, where `f` is the arrow that connects the node with itself.
+3.1.2. Add an identity arrow and infinite arrows for the composition of `f` with `f` and the composition of `f ∘ f` with `f`,  etc, where `f` is the arrow that connects the node with itself.
 
 ```graphviz
 digraph G {
@@ -176,7 +176,7 @@ digraph G {
 }
 ```
 
-1.3. Add identity arrows.
+3.1.3. Add identity arrows.
 
 ```graphviz
 digraph G {
@@ -186,7 +186,7 @@ digraph G {
 }
 ```
 
-1.4. Add an identity arrow and infinite composition of every letter with every other letter and with every composition of every letter, etc.
+3.1.4. Add an identity arrow and infinite composition of every letter with every other letter and with every composition of every letter, etc.
 
 ```graphviz
 digraph G {
@@ -225,9 +225,9 @@ digraph G {
 }
 ```
 
-2. Q: What kind of order is this?
+3.2. Q: What kind of order is this?
 
-2.1.  Q: A set of sets with the inclusion relation: A is included in B if every element of A is also an element of B.
+3.2.1.  Q: A set of sets with the inclusion relation: A is included in B if every element of A is also an element of B.
 
 A relation $aRb$ is an inclusion relation when $a,b \in X: a \subseteq b$
 
@@ -235,5 +235,26 @@ This is a partial-order because the relation is:
 
  * ✅ reflexive: $\forall x\in X:x\subseteq x$
  * ✅ transitive: $\forall a,b,c\in X:\ ( a\ \subseteq b\ \land b\ \subseteq c) \ \rightarrow a\ \subseteq c$
- * ✅ anti-symmetric: $∀a,b∈X:a ⊆b ∧b ⊆a\rightarrow{} a = b$ 
+ * ✅ anti-symmetric: $\forall a,b \in X:a \subseteq b \land b \subseteq a \rightarrow{} a = b$ 
 
+It is not a total order because not all contained sets have a inclusion relation with the other sets, which means it is not strongly connected.
+
+3.2.2. Q: C++ types with the following subtyping relation: T1 is a subtype of T2 if a pointer T1 can be passed to a function that expects a pointer to T2 without triggering a compilation error.
+
+
+In C++ this would look like this
+```
+void f(*T2 x) { ... }
+T1 *y = ...;
+f(y); // no compilation error
+```
+
+The sub-type relation `R` in C++ for a type `T1` and `T2` looks like this: 
+
+```
+R = { (T1, T1), (T1, T2), (T2, T2) }
+```
+
+This is reflexive, transitive and anti-symmetric. Therefore this is also a partial-order. Non-coincidentally this is very similar to the subset relation of the last question, because a sub-type is defined by having all the members of the type it inherits from.
+
+It is not a total order because not every type is in some kind of sub-type or reverse sub-type relation with any other type.
