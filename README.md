@@ -233,9 +233,9 @@ A relation $aRb$ is an inclusion relation when $a,b \in X: a \subseteq b$
 
 This is a partial-order because the relation is:
 
- * ✅ reflexive: $\forall x\in X:x\subseteq x$
- * ✅ transitive: $\forall a,b,c\in X:\ ( a\ \subseteq b\ \land b\ \subseteq c) \ \rightarrow a\ \subseteq c$
- * ✅ anti-symmetric: $\forall a,b \in X:a \subseteq b \land b \subseteq a \rightarrow{} a = b$ 
+ * ✅ Reflexive: $\forall x\in X:x\subseteq x$
+ * ✅ Transitive: $\forall a,b,c\in X:\ ( a\ \subseteq b\ \land b\ \subseteq c) \ \rightarrow a\ \subseteq c$
+ * ✅ Anti-symmetric: $\forall a,b \in X:a \subseteq b \land b \subseteq a \rightarrow{} a = b$ 
 
 It is not a total order because not all contained sets have a inclusion relation with the other sets, which means it is not strongly connected.
 
@@ -258,3 +258,55 @@ R = { (T1, T1), (T1, T2), (T2, T2) }
 This is reflexive, transitive and anti-symmetric. Therefore this is also a partial-order. Non-coincidentally this is very similar to the subset relation of the last question, because a sub-type is defined by having all the members of the type it inherits from.
 
 It is not a total order because not every type is in some kind of sub-type or reverse sub-type relation with any other type.
+
+3.3 Q: Considering that Bool is a set of two values True and False, show that it forms two (set-theoretical) monoids with respect to, respectively, operator && (AND) and || (OR).
+
+The monoid `(Bool, &&, True)` and the monoid `(Bool, ||, False)` are both associative as well have an identity (`True` and `False`) respectively.
+
+ * ✅ Associative: `(x && y) && z = x && (y && z)` / `(x || y) || z = x || (y || z)`
+ * ✅ Identity: `x && True = x`  / `x || False = x`
+
+3.4 Q: Represent the Bool monoid with the AND operator as a category: List the morphisms and their rules of composition.
+ 
+Object:
+ * `Bool` (the set of booleans: `{ False, True }`)
+ 
+Morphisms:
+ * `Identity = (&& True)`
+ * `(&& False)`
+ * `Identity . (&& False) = (&& False)`
+ * `(&& False) . Identity = (&& False)`
+ * `(&& False) . (&& False) = (&& False)`
+ * Ad infinitum, the set of morphisms is closed under composition
+
+Diagram:
+ ```graphviz
+digraph G {
+  Bool:n -> Bool:n[label="(&& True)"]
+  Bool:s -> Bool:s [label="(&& False)"]
+}
+```
+
+3.5. Q: Represent addition modulo 3 as a monoid category.
+
+Object:
+ * `[0, 3)` (all numbers from 0 up to, but not including, 3)
+ 
+Morphisms:
+ * `Identity = (+ 3)`
+ * `(+ 1)`
+ * `(+ 2)`
+ * `(+ 1) . (+ 2) = Identity`
+ * `(+ 1) . (+ 1) = (+ 2)`
+ * Ad infinitum, the set of morphisms is closed under composition
+
+Diagram:
+ ```graphviz
+digraph G {
+  "[0, 3)":n-> "[0, 3)":n [label="(+ 3)"]
+  "[0, 3)"-> "[0, 3)" [label="(+ 1)"]
+  "[0, 3)":s-> "[0, 3)":s [label="(+ 2)"]
+}
+
+
+The object of the category is `[0, Int < 3]`. The identity of the monoid is `0`. 
