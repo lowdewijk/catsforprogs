@@ -307,6 +307,32 @@ digraph G {
   "[0, 3)"-> "[0, 3)" [label="(+ 1)"]
   "[0, 3)":s-> "[0, 3)":s [label="(+ 2)"]
 }
+```
 
 
 The object of the category is `[0, Int < 3]`. The identity of the monoid is `0`. 
+
+## 4. Kleisli Categories
+
+### Summary
+
+ * A writer monad is a monad that can be used to write values as a side-effect of a function to some contained writer value (e.g. a string or log).
+ * A Kleisli category is a category that can be used to compose functions that return monadic values, because in a Kleisli category functions of the type `a -> T b` for some monad `T` are simply morphisms of `a -> b`.
+
+
+ ### Exercises
+
+4.1 Q: Construct the Kleisli category for partial functions (define composition and identity).
+
+In a Kleisli category for a monad `T` each morphism is a function that returns a monadic value. This includes the identity function. Composition is simply the composition of such functions.
+
+Diagram:
+ ```graphviz
+digraph G { 
+  a -> a  [label=" a -> T a"]
+  a -> b  [label=" f: a -> T b"]
+  b -> b  [label=" b -> T b"]
+  b -> c  [label=" g: b -> T c"]
+  a -> c  [label=" f ∘ g: a -> T c"]
+ }
+```
