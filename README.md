@@ -290,22 +290,21 @@ digraph G {
 3.5. Q: Represent addition modulo 3 as a monoid category.
 
 Object:
- * `[0, 3)` (all numbers from 0 up to, but not including, 3)
+ * Real numbers = ℝ
  
 Morphisms:
- * `Identity = (+ 3)`
- * `(+ 1)`
- * `(+ 2)`
+ * `Identity = (+ 3) = (+ 0)`
+ * `(+ 1) = (+ 2) . (+ 2)`
+ * `(+ 2) = (+ 1) . (+ 1)`
  * `(+ 1) . (+ 2) = Identity`
- * `(+ 1) . (+ 1) = (+ 2)`
  * Ad infinitum, the set of morphisms is closed under composition
 
 Diagram:
  ```graphviz
 digraph G {
-  "[0, 3)":n-> "[0, 3)":n [label="(+ 3)"]
-  "[0, 3)"-> "[0, 3)" [label="(+ 1)"]
-  "[0, 3)":s-> "[0, 3)":s [label="(+ 2)"]
+  ℝ:n-> ℝ:n [label="(+ 3)"]
+  ℝ-> ℝ [label="(+ 1)"]
+  ℝ:s-> ℝ:s [label="(+ 2)"]
 }
 ```
 
@@ -324,15 +323,78 @@ The object of the category is `[0, Int < 3]`. The identity of the monoid is `0`.
 
 4.1 Q: Construct the Kleisli category for partial functions (define composition and identity).
 
-In a Kleisli category for a monad `T` each morphism is a function that returns a monadic value. This includes the identity function. Composition is simply the composition of such functions.
+In a Kleisli category for a monad `Option` each morphism from `a` to `b` is a function that takes an `a` and returns an `Option b`. 
+
+ * The identity morphism is simply a function that takes an `a` and returns an `Option a`, the `Some` function. 
+ * Composition of arrows simply composes functions that return an `Option`.
 
 Diagram:
  ```graphviz
 digraph G { 
-  a -> a  [label=" a -> T a"]
-  a -> b  [label=" f: a -> T b"]
-  b -> b  [label=" b -> T b"]
-  b -> c  [label=" g: b -> T c"]
-  a -> c  [label=" f ∘ g: a -> T c"]
+  a -> a  [label=" Some"]
+  a -> b  [label=" f: a -> Option b"]
+  b -> b  [label=" Some"]
+  b -> c  [label=" g: b -> Option c"]
+  a -> c  [label=" f ∘ g: a -> Option c"]
+  c -> c  [label=" Some"]
  }
+```
+
+Code:
+```typescript
+// define Option monad
+type Some<A> = { val: A };
+type None = {};
+const None = {};
+type Option<A> = Some<A> | None;
+
+function Some<A>(a: A): Option<A> {
+  return { val: a };
+}
+
+function isSome<A>(optA: Option<A>): optA is Some<A> {
+  return optA.hasOwnProperty("val");
+}
+
+
+// define Kleisli for Option
+type KleisliMorphism<A, B> = (a: A) => Option<B>;
+type KleisliIdentity<A> = KleisliMorphism<A, A>; // see the function `Some`;
+
+function composeKleisli<A, B, C>(f: KleisliMorphism<B, C>, g: KleisliMorphism<A, B>): KleisliMorphism<A, C> {
+  return a => {
+    const b = g(a);
+    if (isSome(b)) {
+      return f(b.val);
+    } else {
+      return None as Option<C>;
+    }
+  }
+}
+```
+
+4.2 Q: Implement the embellished function safe_reciprocal that returns a valid reciprocal of its argument, if it’s different from zero.
+
+```typescript
+function safe_reciprocal(x: number): Option<number> {
+  if (x === 0) {
+    return None;
+  } else {
+    return Some(1 / x);
+  }
+}
+```
+
+4.3: Q: Compose safe_root and safe_reciprocal to implement safe_root_reciprocal that calculates sqrt(1/x) whenever possible.
+
+```typescript
+function safe_root(x: number): Option<number> {
+  if (x >= 0) {
+    return Some(Math.sqrt(x));
+  } else {
+    return None;
+  }
+ }
+
+const safe_root_reciprocal= composeKleisli(safe_root, safe_reciprocal);
 ```
