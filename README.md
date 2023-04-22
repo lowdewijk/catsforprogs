@@ -269,20 +269,18 @@ The monoid `(Bool, &&, True)` and the monoid `(Bool, ||, False)` are both associ
 3.4 Q: Represent the Bool monoid with the AND operator as a category: List the morphisms and their rules of composition.
  
 Object:
- * `Bool` (the set of booleans: `{ False, True }`)
+`Bool` (the set of booleans: `{ False, True }`)
  
 Morphisms:
- * `Identity = (&& True)`
+There are two unique morphisms from which all other morphism can be composed, i.e. the set of morphisms is closed under composition.
+
+ * Id = `(&& True)`
  * `(&& False)`
- * `Identity . (&& False) = (&& False)`
- * `(&& False) . Identity = (&& False)`
- * `(&& False) . (&& False) = (&& False)`
- * Ad infinitum, the set of morphisms is closed under composition
 
 Diagram:
  ```graphviz
 digraph G {
-  Bool:n -> Bool:n[label="(&& True)"]
+  Bool:n -> Bool:n[label="Identity = (&& True)"]
   Bool:s -> Bool:s [label="(&& False)"]
 }
 ```
@@ -290,34 +288,35 @@ digraph G {
 3.5. Q: Represent addition modulo 3 as a monoid category.
 
 Object:
- * Real numbers = ℝ
+
+Operating on the reals means we need to represent an [uncountably infinite number](https://en.wikipedia.org/wiki/Uncountable_set) of (addition and subtraction) morphisms and operating on the integers means we need morphism to represent negative numbers. Therefore for simplicity sake we choose to operate on the natural numbers represented by ℕ. 
  
 Morphisms:
- * `Identity = (+ 3) = (+ 0)`
- * `(+ 1) = (+ 2) . (+ 2)`
- * `(+ 2) = (+ 1) . (+ 1)`
- * `(+ 1) . (+ 2) = Identity`
- * Ad infinitum, the set of morphisms is closed under composition
+
+To represent addition modulo 3 we can compose addition with the mod 3 operation. We then get 3 unique morphisms that can have an inifinitely many names, i.e. the set of morphisms is closed under composition.
+
+ * Id = `(mod 3) . (+ 3) = (mod 3) . (+ 0) = ((mod 3) .(+ 1)) . ((mod 3) . (+ 2)) = ...`
+ * `(mod 3) . (+ 1) = ((mod 3) . (+ 2)) . ((mod 3) . (+ 2)) = ...`
+ * `((mod 3) . (+ 2)) = (+ 1) . (+ 1) = ...`
 
 Diagram:
  ```graphviz
 digraph G {
-  ℝ:n-> ℝ:n [label="(+ 3)"]
-  ℝ-> ℝ [label="(+ 1)"]
-  ℝ:s-> ℝ:s [label="(+ 2)"]
+  ℕ:n-> ℕ:n [label="Id = (+ 3) . (mod 3)"]
+  ℕ-> ℕ [label="(+ 1) . (mod 3)"]
+  ℕ:s-> ℕ:s [label="(+ 2) . (mod 3)"]
 }
 ```
 
-
-The object of the category is `[0, Int < 3]`. The identity of the monoid is `0`. 
 
 ## 4. Kleisli Categories
 
 ### Summary
 
- * A writer monad is a monad that can be used to write values as a side-effect of a function to some contained writer value (e.g. a string or log).
- * A Kleisli category is a category that can be used to compose functions that return monadic values, because in a Kleisli category functions of the type `a -> T b` for some monad `T` are simply morphisms of `a -> b`.
-
+ * Bartosz (the author) introduces the concept of a writer monad without really explaning what a monad is. Indeed it is not necessary for this chapter to make sense. 
+ * The whole point is that a monad is a structure that encapsulates side-effectby taking pure functions of the form `a -> b` and changing them `a -> M b` (where `M` is some monad). 
+ * A writer monad is a monad that can be used to write values as a side-effect of a function to some contained writer value like a string or log. E.g. a function `() => { log.info("foo called");  return 42; }` can be transformed into a pure function by encapsulate the logging side effect into a writer monad data structure: `foo() => Writer("foo called", 42)`.
+ * A Kleisli category is a category that can be used to compose functions that return monadic values, because in a Kleisli category functions of the type `a -> M b` for some monad `M` are simply morphisms of `a -> b`.
 
  ### Exercises
 
@@ -398,3 +397,75 @@ function safe_root(x: number): Option<number> {
 
 const safe_root_reciprocal= composeKleisli(safe_root, safe_reciprocal);
 ```
+
+## 5. Products and Coproducts
+
+### Summary
+
+### Exercises
+
+5.1 Q: Show that the terminal object is unique up to unique isomorphism
+
+The given definition for the terminal object is:
+
+> The terminal object is the object with one and only one morphism coming to it from any object in the category.
+
+Let there be three terminal objects T1, T2 and T3 and two non terminal objects N1 and N2. 
+
+Diagram:
+ ```graphviz
+digraph G { 
+ N1 -> N1
+ N2 -> N2
+ T1 -> T1
+ T2 -> T2
+ T3 -> T3
+ N1 -> T1
+ N2 -> T1
+ N1 -> T2
+ N2 -> T2
+ N1 -> T3
+ N2 -> T3
+}
+```
+
+In the diagram the T1, T2 and T3 are not yet terminal objects, because they do not yet have one morphism coming to them from all other objects. Once we add them we will see that they form isomorphism:
+
+> An isomorphism is an invertible morphism; or a pair of morphisms, one being the inverse of the other.
+
+Let's add the required morphisms to the diagram to make T1, T2 and T3 terminal objects:
+
+Diagram:
+ ```graphviz
+digraph G { 
+ N1 -> N1
+ N2 -> N2
+ T1 -> T1
+ T2 -> T2
+ T3 -> T3
+ N1 -> T1
+ N2 -> T1
+ N1 -> T2
+ N2 -> T2
+ N1 -> T3
+ N2 -> T3
+ 
+ T1 -> T2 [color="blue"]
+ T2 -> T1 [color="blue"]
+ T1 -> T3 [color="blue"]
+ T3 -> T1 [color="blue"]
+ T2 -> T3 [color="blue"]
+ T3 -> T2 [color="blue"]
+}
+```
+
+In the above diagram it is now clear that the terminal objects T1, T2 and T3 have three unique isomorphisms (in blue). If T1, T2 or T3 had one more morphism coming into it then it would not comply to the terminal object definition anymore that requires it to have *one and only one morphism coming to it from any object in the category*. 
+
+Therefore when we generalize this it is plain to see that for a terminal object to be a terminal object, it must have exactly one isomorphism with any other terminal object.
+
+5.2 Q: What is a product of two objects in a poset? Hint: Use the universal construction.
+
+Bartosz defines the universal construction as:
+
+> “uniqueness up to unique isomorphism” is the important property of all universal constructions
+
